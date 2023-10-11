@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'web',
+    'account',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +54,7 @@ ROOT_URLCONF = 'BugManage.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +134,17 @@ STATICFILES_DIRS = [BASE_DIR, 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+SMS_SECRET_ID = "你的SECRET_ID"
+SMS_SECRET_KEY = "你的SECRET_KEY"
+APP_ID = "你的APP_ID"
+SIGN_NAME = "你的SIGN_NAME"
+TEMPLATE_ID_DICT = {
+    "register": "1111",
+    "login": "2222",
+    "reset_password": "3333"
+}
+try:
+    from . import local_settings
+except ImportError:
+    print("本地缺失local_settings.py文件")

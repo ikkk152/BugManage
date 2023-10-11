@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tracer</title>
+    <link rel="stylesheet" href="{% static 'plugin/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/fontawesome-free-6.4.0-web/css/fontawesome.min.css' %}">
+    {% block css %}
+
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+<script src="{% static 'plugin/jquery-3.4.1/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'plugin/bootstrap-5.3.0-alpha1-dist/js/bootstrap.bundle.min.js' %}"></script>
+{% block js %}
+
+{% endblock %}
+</body>
+</html>
