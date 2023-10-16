@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'web',
     'account',
 ]
@@ -43,10 +44,12 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_ratelimit.middleware.RatelimitMiddleware',
+    # 'account.ratelimit_middleware.RateLimitMiddleware'
 ]
 
 ROOT_URLCONF = 'BugManage.urls'
@@ -91,7 +94,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
-                "max_connections": 1000,
+                "max_connections": 100,
                 "encoding": 'utf-8'
             },
             "PASSWORD": "foobared"  # redis密码
@@ -135,6 +138,7 @@ STATICFILES_DIRS = [BASE_DIR, 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# 发送短信所需
 SMS_SECRET_ID = "你的SECRET_ID"
 SMS_SECRET_KEY = "你的SECRET_KEY"
 APP_ID = "你的APP_ID"
@@ -144,7 +148,34 @@ TEMPLATE_ID_DICT = {
     "login": "2222",
     "reset_password": "3333"
 }
+
+# 发送邮件所需
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True  # 是否使用TLS安全传输协议(用于在两个通信应用程序之间提供保密性和数据完整性)
+EMAIL_USE_SSL = False  # 是否使用SSL加密，qq企业邮箱要求使用，163邮箱设置为True的时候会报ssl的错误
+EMAIL_HOST = 'smtp.163.com'  # 发送邮件的邮箱的SMTP服务器，这里用的是163邮箱
+EMAIL_PORT = 25  # 发件箱的SMTP服务器端口，默认是25
+EMAIL_HOST_USER = 'test@163.com'  # 发送邮件的邮箱地址
+EMAIL_HOST_PASSWORD = '准备工作获取的授权码'  # 发送邮件的邮箱密码(这里使用的是授权码)
+SUBJECT = "BUG管理系统注册通知"
+MESSAGE_TEMPLATE = "用户您好!你的邮箱以用于注册BUG管理系统，用户名为%s,手机号为%s"
+
+# 限流，使用CACHES中的default
+RATELIMIT_USE_CACHE = 'default'
+RATELIMIT_VIEW = 'account.views.ratelimited_view'
+
+# celery
+# 设置存储Celery任务队列的Redis数据库
+# 根据需求修改将password、localhost以及用到的库
+CELERY_BROKER_URL = 'redis://:password@localhost/1'
+# 设置存储Celery任务结果的数据库
+CELERY_RESULT_BACKEND = 'redis://:password@localhost/2'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_IMPORTS = (  # 指定导入的任务模块
+    'account.tasks',
+)
 try:
-    from . import local_settings
+    from .local_settings import *
 except ImportError:
     print("本地缺失local_settings.py文件")
